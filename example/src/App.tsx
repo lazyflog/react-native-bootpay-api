@@ -107,13 +107,8 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-          style={styles.button}
-          onPress={onPress}
-        >
-          <Text>Press Here</Text>
-        </TouchableOpacity> 
-        <BootpayWebView  
+
+<BootpayWebView  
           ref={bootpay}
           ios_application_id={'5b8f6a4d396fa665fdc2b5e9'}
           android_application_id={'5b8f6a4d396fa665fdc2b5e8'} 
@@ -125,6 +120,12 @@ export default function App() {
           onClose={onClose} 
         />
  
+      <TouchableOpacity
+          style={styles.button}
+          onPress={onPress}
+        >
+          <Text>Press Here</Text>
+        </TouchableOpacity> 
     </View>
   );
 }
