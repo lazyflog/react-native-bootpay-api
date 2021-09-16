@@ -1,7 +1,7 @@
 
 
 import React, { Component, useRef } from 'react';
-import { SafeAreaView, Modal, Platform } from 'react-native';
+import { SafeAreaView, Modal, Platform, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import WebView  from 'react-native-webview-bootpay';
 import UserInfo from './UserInfo'
 
@@ -26,13 +26,6 @@ s
     }
 
     render() {
-        console.log('render ' + this.state.script);
-
-        // const injectedJavascript = `(function() {
-        //         window.postMessage = function(data) {
-        //     window.BootpayRNWebView.postMessage(data);
-        //     };
-        // })()`
 
 
         return <Modal
@@ -40,6 +33,17 @@ s
             transparent={false}
             visible={this.state.visibility}>
             <SafeAreaView style={{ flex: 1 }}>
+                {
+                    this.state.showCloseButton &&
+                    <TouchableOpacity
+                        onPress={() => {
+                            this.setState({visibility: false})
+                        } }>
+                        <Image 
+                            style={[styles.overlay]}
+                            source={require('../images/close.png')} />
+                    </TouchableOpacity>
+                }
                 <WebView
                     ref={(wv) => this.webView = wv}
                     useWebKit={true}
@@ -66,9 +70,9 @@ s
         payload.application_id =  Platform.OS == 'ios' ? this.props.ios_application_id : this.props.android_application_id;
         payload.items = items;
         payload.user_info = user;
-        payload.extra = extra;
+        payload.extra = extra; 
 
-        var showCloseBtn = false;
+        this.setState({showCloseButton: true}); 
 
         var quickPopup = '';
 
@@ -91,7 +95,7 @@ s
                 ${this.generateScript(payload)}
                 `,
                 firstLoad: false,
-                showCloseButton: showCloseBtn
+                showCloseButton: extra.show_close_button
             }
         )
         UserInfo.updateInfo();
@@ -245,3 +249,26 @@ s
         // this.callJavaScript(`window.BootPay.setAnalyticsData({uuid:'${uuid}',sk:'${bootpaySK}',sk_time:${bootLastTime},time:${elaspedTime}});`); 
     }
 } 
+
+
+var styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#F5FCFF',
+    },
+    welcome: {
+      fontSize: 20,
+      textAlign: 'center',
+      margin: 10,
+    },
+    // Flex to fill, position absolute, 
+    // Fixed left/top, and the width set to the window width
+    overlay: { 
+      width: 25,
+      height: 25, 
+      right: 5,
+      alignSelf: 'flex-end'
+    }  
+  });

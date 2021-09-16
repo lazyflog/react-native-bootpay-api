@@ -66,7 +66,7 @@ export default function App() {
       theme: "purple", 
       custom_background: "", 
       custom_font_color: "", 
-      ios_close_button: true 
+      show_close_button: false 
     } 
 
     if(bootpay != null && bootpay.current != null) bootpay.current.request(payload, items, user, extra);
