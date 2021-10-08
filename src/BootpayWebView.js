@@ -49,7 +49,7 @@ s
                     useWebKit={true}
                     originWhitelist={['*']}
                     source={{
-                        uri: 'https://inapp.bootpay.co.kr/3.3.2/production.html'
+                        uri: 'https://inapp.bootpay.co.kr/3.3.3/production.html'
                     }}
                     injectedJavaScript={this.state.script}
                     javaScriptEnabled={true}
@@ -63,27 +63,26 @@ s
         </Modal>
     }
 
-    request = async (payload, items, user, extra) => {
-
-        this.state.script = await this.getMountJavascript(); 
+    request = async (payload, items, user, extra) => {        
 
         payload.application_id =  Platform.OS == 'ios' ? this.props.ios_application_id : this.props.android_application_id;
         payload.items = items;
         payload.user_info = user;
         payload.extra = extra; 
 
-        this.setState({showCloseButton: true}); 
+        // this.state.script = await this.getMountJavascript(); 
+        // this.setState({showCloseButton: true}); 
 
         var quickPopup = '';
 
         if(extra != undefined) {
-            if(extra.quickPopup == 1) {
+            if(extra.quick_popup == 1) {
                 quickPopup = 'BootPay.startQuickPopup();';
             }
         }
         // injectedJavaScript += 'BootPay.request(' + JSON.stringify(payload) + ')';
 
-        // console.log('request ' + this.injectedJavaScript);
+        
 
         //visibility가 true가 되면 webview onLoaded가 실행됨
         this.setState(
@@ -97,7 +96,8 @@ s
                 firstLoad: false,
                 showCloseButton: extra.show_close_button
             }
-        )
+        ) 
+
         UserInfo.updateInfo();
     }
 
@@ -196,8 +196,7 @@ s
         }
     }
 
-    onShouldStartLoadWithRequest = (url) => {
-        console.log(url);
+    onShouldStartLoadWithRequest = (url) => { 
         return true;
     }
 
