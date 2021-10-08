@@ -37,6 +37,18 @@ s
                     this.state.showCloseButton &&
                     <TouchableOpacity
                         onPress={() => {
+                            var cancelData = {
+                                action: 'BootpayCancel',
+                                message: '사용자에 의해 취소되었습니다'
+                            }
+                            var closeData = {
+                                action: 'BootpayClose',
+                                message: '결제창이 닫혔습니다'
+                            }
+                            
+                            if(this.props.onCancel != undefined) this.props.onCancel(cancelData);
+                            if(this.props.onClose != undefined) this.props.onClose(closeData); 
+
                             this.setState({visibility: false})
                         } }>
                         <Image 
@@ -69,19 +81,15 @@ s
         payload.items = items;
         payload.user_info = user;
         payload.extra = extra; 
-
-        // this.state.script = await this.getMountJavascript(); 
-        // this.setState({showCloseButton: true}); 
+ 
 
         var quickPopup = '';
 
-        if(extra != undefined) {
+        if(extra != undefined && extra.quick_popup != undefined) {
             if(extra.quick_popup == 1) {
                 quickPopup = 'BootPay.startQuickPopup();';
             }
-        }
-        // injectedJavaScript += 'BootPay.request(' + JSON.stringify(payload) + ')';
-
+        } 
         
 
         //visibility가 true가 되면 webview onLoaded가 실행됨
@@ -94,7 +102,7 @@ s
                 ${this.generateScript(payload)}
                 `,
                 firstLoad: false,
-                showCloseButton: extra.show_close_button
+                showCloseButton: extra.show_close_button || false  
             }
         ) 
 
@@ -109,21 +117,7 @@ s
         )
         this.removePaymentWindow();
     }
-
-    // uri: 'https://inapp.bootpay.co.kr/3.3.1/production.html'
-    // onLoadEnd = async (e) => { 
-        // if(this.state.firstLoad == true) return;
-
-        // this.setBootpayPlatform();
-        // await this.setAnalyticsData();
-        // this.setPayScript();
-        // this.startBootpay();
-
-        // this.setState({
-        //     ...this,
-        //     firstLoad: true
-        // }) 
-    // }
+ 
 
     getMountJavascript = async () => { 
         return `
@@ -133,10 +127,7 @@ s
     }
 
 
-    generateScript= (payload) => {
-
-        // BootPay.request(${JSON.stringify(payload)})
-
+    generateScript= (payload) => { 
         const onError = '.error(function(data){ window.BootpayRNWebView.postMessage( JSON.stringify(data) ); })';
         const onCancel = '.cancel(function(data){ window.BootpayRNWebView.postMessage( JSON.stringify(data) ); })';
         const onReady = '.ready(function(data){ window.BootpayRNWebView.postMessage( JSON.stringify(data) ); })';
@@ -218,6 +209,8 @@ s
     // } 
 
     transactionConfirm = (data) => {
+        // console.log('transactionConfirm: ' + data);
+
         var json = JSON.stringify(data)
         this.callJavaScript(`
         BootPay.transactionConfirm(${json});
@@ -232,9 +225,13 @@ s
 
     callJavaScript = (script) => {
         if(this.webView == null || this.webView == undefined) return;
-        this.webView.callJavaScript(`
+
+        // console.log('callJavascript: ' + script);
+
+        this.webView.injectJavaScript(`
         javascript:(function(){${script} })()
-          `);
+        `);
+        //   this.webView.evalu
     }  
 
     getAnalyticsData = async () => { 

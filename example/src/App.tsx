@@ -16,10 +16,10 @@ export default function App() {
 
   const onPress = () => {   
     const payload = {
-      pg: 'payapp',  //['kcp', 'danal', 'inicis', 'nicepay', 'lgup', 'toss', 'payapp', 'easypay', 'jtnet', 'tpay', 'mobilians', 'payletter', 'onestore', 'welcome'] 중 택 1
+      pg: 'nicepay',  //['kcp', 'danal', 'inicis', 'nicepay', 'lgup', 'toss', 'payapp', 'easypay', 'jtnet', 'tpay', 'mobilians', 'payletter', 'onestore', 'welcome'] 중 택 1
       name: '마스카라', //결제창에 보여질 상품명
       order_id: '1234_1234', //개발사에 관리하는 주문번호 
-      method: 'npay', 
+      method: 'phone', 
       price: 1000 //결제금액 
     } 
 
@@ -66,7 +66,7 @@ export default function App() {
       theme: "purple", 
       custom_background: "", 
       custom_font_color: "", 
-      show_close_button: false 
+      show_close_button: true 
     } 
 
     if(bootpay != null && bootpay.current != null) bootpay.current.request(payload, items, user, extra);
