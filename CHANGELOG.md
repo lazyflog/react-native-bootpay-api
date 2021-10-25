@@ -1,3 +1,6 @@
+### 1.4.3
+- bootpay anlaytics api 추가 
+
 ### 1.0.4
 - typescript declare 적용 
 

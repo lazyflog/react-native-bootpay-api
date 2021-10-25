@@ -6,15 +6,60 @@ import {
   Text,
   TouchableOpacity
 } from 'react-native';
-import { BootpayWebView } from 'react-native-bootpay-api';
+import { BootpayWebView, userTrace, pageTrace } from 'react-native-bootpay-api';
 // import { WebView } from 'react-native-webview-bootpay';
 
 
 export default function App() {
   const bootpay = useRef<BootpayWebView>(null);
+  // const api = useRef<BootpayAnalytics>(null);
+
+  const onAnalyticsPress = async () => {
+
+    
+    //회원 추적
+    await userTrace(
+      '5b8f6a4d396fa665fdc2b5e9',
+      'user_1234',
+      '01012345678',
+      'rupy1014@gmail.com',
+      1,
+      '861014',
+      '서울'
+    );
+
+    //결제되는 상품정보들로 통계에 사용되며, price의 합은 결제금액과 동일해야함 
+    const items = [
+      {
+        item_name: '키보드', //통계에 반영될 상품명  
+        unique: 'ITEM_CODE_KEYBOARD', //개발사에서 관리하는 상품고유번호 
+        price: 1000, //상품단가 
+        cat1: '패션', //카테고리 상 , 자유롭게 기술
+        cat2: '여성상의', //카테고리 중, 자유롭게 기술 
+        cat3: '블라우스', //카테고리 하, 자유롭게 기술
+      },
+      {
+        item_name: '마우스', //통계에 반영될 상품명  
+        unique: 'ITEM_CODE_KEYBOARD', //개발사에서 관리하는 상품고유번호 
+        price: 2000, //상품단가 
+        cat1: '패션2', //카테고리 상 , 자유롭게 기술
+        cat2: '여성상의2', //카테고리 중, 자유롭게 기술 
+        cat3: '블라우스2', //카테고리 하, 자유롭게 기술
+      }
+    ]
+
+    //페이지 추적 
+    await pageTrace(
+      '5b8f6a4d396fa665fdc2b5e9',
+      'main_page_1234',
+      '',
+      items
+    );
+  }
   
 
-  const onPress = () => {   
+  const onPayPress = () => {    
+
     const payload = {
       pg: 'nicepay',  //['kcp', 'danal', 'inicis', 'nicepay', 'lgup', 'toss', 'payapp', 'easypay', 'jtnet', 'tpay', 'mobilians', 'payletter', 'onestore', 'welcome'] 중 택 1
       name: '마스카라', //결제창에 보여질 상품명
@@ -122,10 +167,17 @@ export default function App() {
  
       <TouchableOpacity
           style={styles.button}
-          onPress={onPress}
+          onPress={onAnalyticsPress}
         >
-          <Text>Press Here</Text>
-        </TouchableOpacity> 
+          <Text>analytics click</Text>
+      </TouchableOpacity> 
+
+      <TouchableOpacity
+          style={styles.button}
+          onPress={onPayPress}
+        >
+          <Text>pay click</Text>
+      </TouchableOpacity> 
     </View>
   );
 }

@@ -1,8 +1,10 @@
  
-import { useBootpay } from './useBootpay';
+// import { useBootpay } from './useBootpay';
 import { BootpayWebView } from './BootpayWebView'
+import { userTrace, pageTrace } from './BootpayAnalytics'
 
-export { useBootpay, BootpayWebView };
+export {  BootpayWebView, userTrace, pageTrace };
+// export { useBootpay };
 
 // import React, { Component } from 'react';
 // import WebView  from 'react-native-webview-bootpay';

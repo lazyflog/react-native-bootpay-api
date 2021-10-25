@@ -3478,8 +3478,23 @@ react-is@^16.12.0, react-is@^16.8.1, react-is@^16.8.4:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
+react-native-aes-crypto@^1.3.10:
+  version "1.3.10"
+  resolved "https://registry.yarnpkg.com/react-native-aes-crypto/-/react-native-aes-crypto-1.3.10.tgz#8e7d536a19481dd087e8c40083008a843f961495"
+  integrity sha512-aQsbXCmsQEaXqjpKo8S0ot5CnK6KGN/Jx0qN1B3I8Au8Egl66BKryxD9wmorHYdjx+omctdug/mNWHKDRmDlow==
+
+react-native-base64@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/react-native-base64/-/react-native-base64-0.2.1.tgz#3d0e73a649c4c0129f7b7695d3912456aebae847"
+  integrity sha512-eHgt/MA8y5ZF0aHfZ1aTPcIkDWxza9AaEk4GcpIX+ZYfZ04RcaNahO+527KR7J44/mD3efYfM23O2C1N44ByWA==
+
 "react-native-bootpay-api@file:..":
-  version "1.0.3"
+  version "1.4.2"
+
+react-native-crypto-aes-cbc@^1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/react-native-crypto-aes-cbc/-/react-native-crypto-aes-cbc-1.0.8.tgz#c6d06e583642b7277ca4f2b70dcb41d102f43f92"
+  integrity sha512-evx5c0/0DWNUWNynkrXr+ePPnAnZ2tgycdQtpeVJsKmBJd1iFCE73v9C/GHUuNOP5t1JAqOBxt7PGW9Pe0LWpw==
 
 react-native-device-info@8.4.0:
   version "8.4.0"
