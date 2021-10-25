@@ -3,9 +3,8 @@
 import base64 from 'react-native-base64'
 import DeviceInfo from 'react-native-device-info';
 
-// import CryptoJS from 'crypto-js';
-import CryptoAesCbc from 'react-native-crypto-aes-cbc';
-import { NativeModules, Platform } from 'react-native'
+// import CryptoJS from 'crypto-js'; 
+import { NativeModules } from 'react-native'
 var Aes = NativeModules.Aes
 
 
