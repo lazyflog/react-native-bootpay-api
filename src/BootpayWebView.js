@@ -1,19 +1,35 @@
 
 
-import React, { Component, useRef } from 'react';
-import { SafeAreaView, Modal, Platform, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import React, { Component, useRef, useEffect } from 'react';
+import { SafeAreaView, Modal, Platform, TouchableOpacity, Image, StyleSheet,  BackHandler} from 'react-native';
 import WebView  from 'react-native-webview-bootpay';
 import UserInfo from './UserInfo'
 
 export class BootpayWebView extends Component {
     webView = useRef<WebView>(null); 
 
+    
     state = {
         visibility: false, 
         script: '',
         firstLoad: false
     } 
-s
+ 
+    // canGoBack() {
+    //     console.log('canGoBack');
+    //     if(this.webView.current) {
+    //         return this.webView.current.canGoBack();
+    //     }
+    //     return false;
+    // }
+
+    // goBack() {
+    //     console.log('GoBack');
+    //     if(this.webView.goBack) {
+    //         this.webView.current.goBack();
+    //     }
+    // }
+
     async componentWillUnmount() {
         this.setState(
             {
@@ -25,12 +41,13 @@ s
         UserInfo.setBootpayLastTime(Date.now());
     }
  
-    render() {
-
-
+    render() { 
         return <Modal
             animationType={'slide'}
-            transparent={false}
+            transparent={false} 
+            onRequestClose={()=> { 
+                this.dismiss();
+            }}
             visible={this.state.visibility}>
             <SafeAreaView style={{ flex: 1 }}>
                 {
@@ -58,15 +75,20 @@ s
                 }
                 <WebView
                     ref={(wv) => this.webView = wv}
+                    // ref={btWebView}
                     useWebKit={true}
                     originWhitelist={['*']}
                     source={{
                         uri: 'https://inapp.bootpay.co.kr/3.3.3/production.html'
                     }}
+                    onRequestClose={()=> {
+                        console.log('onRequestClose');
+                        this.dismiss();
+                    }}
                     injectedJavaScript={this.state.script}
                     javaScriptEnabled={true}
                     javaScriptCanOpenWindowsAutomatically={true}
-                    scalesPageToFit={true} 
+                    // scalesPageToFit={true} 
                     onMessage={this.onMessage}
                     onShouldStartLoadWithRequest={this.onShouldStartLoadWithRequest}
                 />

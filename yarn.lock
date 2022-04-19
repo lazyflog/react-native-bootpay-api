@@ -7657,10 +7657,10 @@ react-native-sensitive-info@^5.5.8:
   resolved "https://registry.yarnpkg.com/react-native-sensitive-info/-/react-native-sensitive-info-5.5.8.tgz#6ebb67eed83d1c2867bd435630ef2c41eef204ed"
   integrity sha512-p99oaEW4QG1RdUNrkvd/c6Qdm856dQw/Rk81f9fA6Y3DlPs6ADNdU+jbPuTz3CcOUJwuKBDNenX6LR9KfmGFEg==
 
-react-native-webview-bootpay@^11.6.5:
-  version "11.6.5"
-  resolved "https://registry.yarnpkg.com/react-native-webview-bootpay/-/react-native-webview-bootpay-11.6.5.tgz#86ea00306408df3724c9107f97cd5c989957cd8b"
-  integrity sha512-eOuDmswaTSAYngknV1jMTCZ/cp6ulW1Yd+o308GRDMyQtBHWiwGYOHwpGsCJV0RdPcIx7re9v2+xrAGTgrAVMw==
+react-native-webview-bootpay@^11.6.511:
+  version "11.6.511"
+  resolved "https://registry.yarnpkg.com/react-native-webview-bootpay/-/react-native-webview-bootpay-11.6.511.tgz#94801da2306e3c6264889147edda1450726534e2"
+  integrity sha512-VzfgOjAbaN9om2GuL2EKv/i/4rqldht9GLCyPoHrhUkCTYX46IZ81ChHIDlgOjy0GGnxjv/7DiihEA7NvPcElw==
   dependencies:
     escape-string-regexp "2.0.0"
     invariant "2.2.4"

@@ -1,4 +1,5 @@
-import React, { useRef }  from 'react';
+import React, { useRef, useEffect }  from 'react';
+import { BackHandler } from 'react-native';
 
 import {
   StyleSheet,
@@ -6,13 +7,33 @@ import {
   Text,
   TouchableOpacity
 } from 'react-native';
-import { BootpayWebView, userTrace, pageTrace } from 'react-native-bootpay-api';
-// import { WebView } from 'react-native-webview-bootpay';
+import { BootpayWebView, userTrace, pageTrace } from 'react-native-bootpay-api';  
+
 
 
 export default function App() {
   const bootpay = useRef<BootpayWebView>(null);
   // const api = useRef<BootpayAnalytics>(null);
+
+  const onAndroidBackPress = (): boolean => {
+    console.log(1234);
+    // if (bootpay.current) {
+    //   if(bootpay.current.canGoBack()) {
+    //     bootpay.current.goBack();
+    //   } else {
+    //     bootpay.current.dismiss();
+    //   }
+    //   return true; // prevent default behavior (exit app)
+    // }
+    return false;
+  };
+
+  useEffect((): (() => void) => {
+    BackHandler.addEventListener('hardwareBackPress', onAndroidBackPress);
+    return (): void => {
+      BackHandler.removeEventListener('hardwareBackPress', onAndroidBackPress);
+    };
+  }, []); // Never
 
   const onAnalyticsPress = async () => {
 
@@ -59,9 +80,10 @@ export default function App() {
   
 
   const onPayPress = () => {    
+    console.log('onPayPress');
 
     const payload = {
-      pg: 'nicepay',  //['kcp', 'danal', 'inicis', 'nicepay', 'lgup', 'toss', 'payapp', 'easypay', 'jtnet', 'tpay', 'mobilians', 'payletter', 'onestore', 'welcome'] 중 택 1
+      pg: 'danal',  //['kcp', 'danal', 'inicis', 'nicepay', 'lgup', 'toss', 'payapp', 'easypay', 'jtnet', 'tpay', 'mobilians', 'payletter', 'onestore', 'welcome'] 중 택 1
       name: '마스카라', //결제창에 보여질 상품명
       order_id: '1234_1234', //개발사에 관리하는 주문번호 
       method: 'phone', 
@@ -153,17 +175,17 @@ export default function App() {
   return (
     <View style={styles.container}>
 
-<BootpayWebView  
-          ref={bootpay}
-          ios_application_id={'5b8f6a4d396fa665fdc2b5e9'}
-          android_application_id={'5b8f6a4d396fa665fdc2b5e8'} 
-          onCancel={onCancel}
-          onError={onError}
-          onReady={onReady}
-          onConfirm={onConfirm}
-          onDone={onDone}
-          onClose={onClose} 
-        />
+      <BootpayWebView  
+        ref={bootpay}
+        ios_application_id={'5b8f6a4d396fa665fdc2b5e9'}
+        android_application_id={'5b8f6a4d396fa665fdc2b5e8'} 
+        onCancel={onCancel}
+        onError={onError}
+        onReady={onReady}
+        onConfirm={onConfirm}
+        onDone={onDone}
+        onClose={onClose} 
+      />
  
       <TouchableOpacity
           style={styles.button}
@@ -187,6 +209,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: "#00DDDD",
   },
   button: {
     alignItems: "center",

@@ -1,3 +1,6 @@
+### 1.5.1
+- 안드로이드 팝업 일 경우 백버튼 클릭시 닫히도록 수정 
+
 ### 1.5.0
 - webview update, android manifest 외부앱 패키지명 update 
 
