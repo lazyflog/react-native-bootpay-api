@@ -86,7 +86,7 @@ export default function App() {
       pg: 'danal',  //['kcp', 'danal', 'inicis', 'nicepay', 'lgup', 'toss', 'payapp', 'easypay', 'jtnet', 'tpay', 'mobilians', 'payletter', 'onestore', 'welcome'] 중 택 1
       name: '마스카라', //결제창에 보여질 상품명
       order_id: '1234_1234', //개발사에 관리하는 주문번호 
-      method: 'phone', 
+      method: 'card', 
       price: 1000 //결제금액 
     } 
 

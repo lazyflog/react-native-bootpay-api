@@ -551,7 +551,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = kr.co.bootpay.rnapi;
+				PRODUCT_BUNDLE_IDENTIFIER = kr.co.bootpay.rn.webview.example;
 				PRODUCT_NAME = BootpayApiExample;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -574,7 +574,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = kr.co.bootpay.rnapi;
+				PRODUCT_BUNDLE_IDENTIFIER = kr.co.bootpay.rn.webview.example;
 				PRODUCT_NAME = BootpayApiExample;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
