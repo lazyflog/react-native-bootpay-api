@@ -6,6 +6,8 @@ import WebView  from 'react-native-webview-bootpay';
 import UserInfo from './UserInfo'
 
 export class BootpayWebView extends Component {
+ 
+
     webView = useRef<WebView>(null); 
 
     
@@ -79,7 +81,7 @@ export class BootpayWebView extends Component {
                     useWebKit={true}
                     originWhitelist={['*']}
                     source={{
-                        uri: 'https://inapp.bootpay.co.kr/3.3.3/production.html'
+                        uri: 'https://webview.bootpay.co.kr/4.0.0/'
                     }}
                     onRequestClose={()=> {
                         console.log('onRequestClose');
@@ -97,22 +99,24 @@ export class BootpayWebView extends Component {
         </Modal>
     }
 
-    request = async (payload, items, user, extra) => {        
+    requestPayment = async (payload, items, user, extra) => {        
+        this.bootpayRequest(payload, items, user, extra, "requestPayment");
+    }
 
+    requestSubscription = async (payload, items, user, extra) => {        
+        this.bootpayRequest(payload, items, user, extra, "requestSubscription");
+    }
+
+    requestAuthentication = async (payload, items, user, extra) => {        
+        this.bootpayRequest(payload, items, user, extra, "requestAuthentication");
+    }
+
+    bootpayRequest = async (payload, items, user, extra, requestMethod) => {              
         payload.application_id =  Platform.OS == 'ios' ? this.props.ios_application_id : this.props.android_application_id;
         payload.items = items;
         payload.user_info = user;
         payload.extra = extra; 
- 
-
-        var quickPopup = '';
-
-        if(extra != undefined && extra.quick_popup != undefined) {
-            if(extra.quick_popup == 1) {
-                quickPopup = 'BootPay.startQuickPopup();';
-            }
-        } 
-        
+  
 
         //visibility가 true가 되면 webview onLoaded가 실행됨
         this.setState(
@@ -121,15 +125,17 @@ export class BootpayWebView extends Component {
                 script: `
                 ${await this.getMountJavascript()}
                 ${quickPopup}
-                ${this.generateScript(payload)}
+                ${this.generateScript(payload, requestMethod)}
                 `,
                 firstLoad: false,
                 showCloseButton: extra.show_close_button || false  
             }
         ) 
 
-        UserInfo.updateInfo();
+        UserInfo.updateInfo();  
     }
+ 
+
 
     dismiss = () => {
         this.setState(
@@ -149,15 +155,21 @@ export class BootpayWebView extends Component {
     }
 
 
-    generateScript= (payload) => { 
-        const onError = '.error(function(data){ window.BootpayRNWebView.postMessage( JSON.stringify(data) ); })';
-        const onCancel = '.cancel(function(data){ window.BootpayRNWebView.postMessage( JSON.stringify(data) ); })';
-        const onReady = '.ready(function(data){ window.BootpayRNWebView.postMessage( JSON.stringify(data) ); })';
-        const onConfirm = '.confirm(function(data){ window.BootpayRNWebView.postMessage( JSON.stringify(data) ); })';
-        const onClose = '.close(function(data){ window.BootpayRNWebView.postMessage("close"); })';
-        const onDone = '.done(function(data){ window.BootpayRNWebView.postMessage( JSON.stringify(data) ); })';
+    generateScript= (payload, requestMethod) => {  
+        var requestMethod = "requestPayment";
 
-        return `BootPay.request(${JSON.stringify(payload)})` + onError + onCancel + onReady + onConfirm + onClose + onDone + '; void(0);';
+        const script = "Bootpay." + requestMethod + 
+        `(${JSON.stringify(payload)})` +
+        ".then( function (res) {" + 
+        confirm() + 
+        issued() + 
+        done() + 
+        "}, function (res) {" +
+        error() + 
+        cancel() + 
+        "})";
+
+        this.callJavaScript(script);
     }
 
     onMessage = ({ nativeEvent }) => { 
@@ -215,9 +227,9 @@ export class BootpayWebView extends Component {
 
     getBootpayPlatform = () => { 
         if(Platform.OS == 'ios') {
-            return "BootPay.setDevice('IOS');";
+            return "Bootpay.setDevice('IOS');";
         } else if(Platform.OS == 'android'){
-            return "BootPay.setDevice('ANDROID');"; 
+            return "Bootpay.setDevice('ANDROID');"; 
         }
     }
 
@@ -230,18 +242,23 @@ export class BootpayWebView extends Component {
         // }
     // } 
 
-    transactionConfirm = (data) => {
-        // console.log('transactionConfirm: ' + data);
+    transactionConfirm = () => { 
+        const script = "Bootpay.confirm()" + 
+        ".then( function (res) {" + 
+        confirm() + 
+        issued() + 
+        done() + 
+        "}, function (res) {" +
+        error() + 
+        cancel() + 
+        "})";
 
-        var json = JSON.stringify(data)
-        this.callJavaScript(`
-        BootPay.transactionConfirm(${json});
-          `);
+        this.callJavaScript(script);
     }
 
     removePaymentWindow = () => {
         this.callJavaScript(`
-        BootPay.removePaymentWindow();
+        Bootpay.removePaymentWindow();
           `);
     } 
 
@@ -258,13 +275,37 @@ export class BootpayWebView extends Component {
 
     getAnalyticsData = async () => { 
         const uuid = await UserInfo.getBootpayUUID(); 
-        const bootpaySK = await UserInfo.getBootpaySK();
+        // const bootpaySK = await UserInfo.getBootpaySK();
         const bootLastTime = await UserInfo.getBootpayLastTime();      
 
 
         const elaspedTime = Date.now() - bootLastTime;  
-        return `window.BootPay.setAnalyticsData({uuid:'${uuid}',sk:'${bootpaySK}',sk_time:${bootLastTime},time:${elaspedTime}});`;
+        return `window.Bootpay.$analytics.setAnalyticsData({uuid:'${uuid}', time:${elaspedTime}});`;
         // this.callJavaScript(`window.BootPay.setAnalyticsData({uuid:'${uuid}',sk:'${bootpaySK}',sk_time:${bootLastTime},time:${elaspedTime}});`); 
+    }
+
+    confirm = () => {
+        return "if (res.event === 'confirm') { window.BootpayRNWebView.postMessage( JSON.stringify(res) ); }";
+    }
+
+    done = () => {
+        return "else if (res.event === 'done') { window.BootpayRNWebView.postMessage( JSON.stringify(res) ); }";
+    }
+
+    issued = () => {
+        return "else if (res.event === 'issued') { window.BootpayRNWebView.postMessage( JSON.stringify(res) ); }";
+    }
+
+    error = () => {
+        return "if (res.event === 'error') { window.BootpayRNWebView.postMessage( JSON.stringify(res) ); }";
+    }
+
+    cancel = () => {
+        return "else if (res.event === 'cancel') { window.BootpayRNWebView.postMessage( JSON.stringify(res) ); }";
+    }
+
+    close = () => {
+        return "document.addEventListener('bootpayclose', function (e) {  window.BootpayRNWebView.postMessage('close'); });";
     }
 } 
 
