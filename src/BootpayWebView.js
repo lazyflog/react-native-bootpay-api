@@ -123,8 +123,7 @@ export class BootpayWebView extends Component {
             {
                 visibility: true,
                 script: `
-                ${await this.getMountJavascript()}
-                ${quickPopup}
+                ${await this.getMountJavascript()} 
                 ${this.generateScript(payload, requestMethod)}
                 `,
                 firstLoad: false,
@@ -155,9 +154,7 @@ export class BootpayWebView extends Component {
     }
 
 
-    generateScript= (payload, requestMethod) => {  
-        var requestMethod = "requestPayment";
-
+    generateScript= (payload, requestMethod) => {    
         const script = "Bootpay." + requestMethod + 
         `(${JSON.stringify(payload)})` +
         ".then( function (res) {" + 
@@ -181,42 +178,47 @@ export class BootpayWebView extends Component {
                 action: 'BootpayClose',
                 message: '결제창이 닫혔습니다'
             }
+            this.setState(
+                {
+                    visibility: false
+                }
+            )
             this.props.onClose(json);
             this.dismiss();
             return;
         }
 
         const data = JSON.parse(nativeEvent.data);
-        switch (data.action) {
-            case 'BootpayCancel':
+        switch (data.event) {
+            case 'cancel':
                 if(this.props.onCancel != undefined) this.props.onCancel(data);
-                this.setState(
-                    {
-                        visibility: false
-                    }
-                )
+                // this.setState(
+                //     {
+                //         visibility: false
+                //     }
+                // )
                 break;
-            case 'BootpayError':
+            case 'error':
                 if(this.props.onError != undefined) this.props.onError(data);
-                this.setState(
-                    {
-                        visibility: false
-                    }
-                )
+                // this.setState(
+                //     {
+                //         visibility: false
+                //     }
+                // )
                 break;
-            case 'BootpayBankReady':
+            case 'issued':
                 if(this.props.onReady != undefined) this.props.onReady(data);
                 break;
-            case 'BootpayConfirm':
+            case 'confirm':
                 if(this.props.onConfirm != undefined) this.props.onConfirm(data);
                 break;
-            case 'BootpayDone':
+            case 'done':
                 if(this.props.onDone != undefined) this.props.onDone(data);
-                this.setState(
-                    {
-                        visibility: false
-                    }
-                )
+                // this.setState(
+                //     {
+                //         visibility: false
+                //     }
+                // )
                 break;
         }
     }
