@@ -158,12 +158,12 @@ export class BootpayWebView extends Component {
         const script = "Bootpay." + requestMethod + 
         `(${JSON.stringify(payload)})` +
         ".then( function (res) {" + 
-        confirm() + 
-        issued() + 
-        done() + 
+        this.confirm() + 
+        this.issued() + 
+        this.done() + 
         "}, function (res) {" +
-        error() + 
-        cancel() + 
+        this.error() + 
+        this.cancel() + 
         "})";
 
         this.callJavaScript(script);
@@ -247,12 +247,12 @@ export class BootpayWebView extends Component {
     transactionConfirm = () => { 
         const script = "Bootpay.confirm()" + 
         ".then( function (res) {" + 
-        confirm() + 
-        issued() + 
-        done() + 
+        this.confirm() + 
+        this.issued() + 
+        this.done() + 
         "}, function (res) {" +
-        error() + 
-        cancel() + 
+        this.error() + 
+        this.cancel() + 
         "})";
 
         this.callJavaScript(script);
