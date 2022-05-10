@@ -9,6 +9,9 @@
 
 ### 1.5.0
 - webview update, android manifest 외부앱 패키지명 update 
+### 4.0.0
+- bootpay js major update 
+
 
 ### 1.4.4
 - 사용하지 않은 패키지 제거 
