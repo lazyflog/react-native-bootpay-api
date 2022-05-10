@@ -1,4 +1,4 @@
-### 4.0.0-beta.0
+### 4.0.0
 - bootpay major update 
 
 ### 1.5.2

@@ -42,6 +42,17 @@ export class BootpayWebView extends Component {
         )
         UserInfo.setBootpayLastTime(Date.now());
     }
+
+    // componentDidMount() {
+    //     // if(this.webView == null || this.webView == undefined || this.webView == false) return;
+
+    //     console.log('componentDidMount: ' + this.close());
+
+    //     this.webView.injectJavaScript(`
+    //     javascript:(function(){${this.close()} })()
+    //     `);
+        
+    // }
  
     render() { 
         return <Modal
@@ -76,15 +87,14 @@ export class BootpayWebView extends Component {
                     </TouchableOpacity>
                 }
                 <WebView
-                    ref={(wv) => this.webView = wv}
-                    // ref={btWebView}
+                    ref={(wv) => this.webView = wv} 
                     useWebKit={true}
                     originWhitelist={['*']}
                     source={{
                         uri: 'https://webview.bootpay.co.kr/4.0.0/'
                     }}
                     onRequestClose={()=> {
-                        console.log('onRequestClose');
+                        // console.log('onRequestClose');
                         this.dismiss();
                     }}
                     injectedJavaScript={this.state.script}
@@ -114,7 +124,7 @@ export class BootpayWebView extends Component {
     bootpayRequest = async (payload, items, user, extra, requestMethod) => {              
         payload.application_id =  Platform.OS == 'ios' ? this.props.ios_application_id : this.props.android_application_id;
         payload.items = items;
-        payload.user_info = user;
+        payload.user = user;
         payload.extra = extra; 
   
 
@@ -142,13 +152,14 @@ export class BootpayWebView extends Component {
                 visibility: false
             })
         )
-        this.removePaymentWindow();
+        // this.removePaymentWindow();
     }
  
 
     getMountJavascript = async () => { 
         return `
         ${this.getBootpayPlatform()}
+        ${this.close()}
         ${await this.getAnalyticsData()}
         `; 
     }
@@ -164,13 +175,18 @@ export class BootpayWebView extends Component {
         "}, function (res) {" +
         this.error() + 
         this.cancel() + 
-        "})";
+        "}); void(0);";
+        
+        return script;
 
-        this.callJavaScript(script);
+        // return this.generateScript; 
     }
 
     onMessage = ({ nativeEvent }) => { 
         if (nativeEvent == undefined || nativeEvent.data == undefined) return;
+        
+
+        console.log(`onMessage: ${nativeEvent.data}`);
     
         if(nativeEvent.data == 'close') {
             if(this.props.onClose == undefined) return;
@@ -178,11 +194,11 @@ export class BootpayWebView extends Component {
                 action: 'BootpayClose',
                 message: '결제창이 닫혔습니다'
             }
-            this.setState(
-                {
-                    visibility: false
-                }
-            )
+            // this.setState(
+            //     {
+            //         visibility: false
+            //     }
+            // )
             this.props.onClose(json);
             this.dismiss();
             return;
@@ -191,34 +207,22 @@ export class BootpayWebView extends Component {
         const data = JSON.parse(nativeEvent.data);
         switch (data.event) {
             case 'cancel':
-                if(this.props.onCancel != undefined) this.props.onCancel(data);
-                // this.setState(
-                //     {
-                //         visibility: false
-                //     }
-                // )
+                if(this.props.onCancel != undefined) this.props.onCancel(data); 
                 break;
             case 'error':
-                if(this.props.onError != undefined) this.props.onError(data);
-                // this.setState(
-                //     {
-                //         visibility: false
-                //     }
-                // )
+                if(this.props.onError != undefined) this.props.onError(data); 
                 break;
             case 'issued':
-                if(this.props.onReady != undefined) this.props.onReady(data);
+                if(this.props.onReady != undefined) this.props.onIssued(data);
                 break;
             case 'confirm':
                 if(this.props.onConfirm != undefined) this.props.onConfirm(data);
                 break;
             case 'done':
-                if(this.props.onDone != undefined) this.props.onDone(data);
-                // this.setState(
-                //     {
-                //         visibility: false
-                //     }
-                // )
+                if(this.props.onDone != undefined) this.props.onDone(data); 
+                break;
+            case 'close':
+                if(this.props.onClose != undefined) this.props.onClose(data);
                 break;
         }
     }
@@ -259,13 +263,14 @@ export class BootpayWebView extends Component {
     }
 
     removePaymentWindow = () => {
-        this.callJavaScript(`
-        Bootpay.removePaymentWindow();
-          `);
+        this.dismiss();
+        // this.callJavaScript(`
+        // Bootpay.removePaymentWindow();
+        //   `);
     } 
 
-    callJavaScript = (script) => {
-        if(this.webView == null || this.webView == undefined) return;
+    callJavaScript = (script) => { 
+        if(this.webView == null || this.webView == undefined || this.webView == false) return;
 
         // console.log('callJavascript: ' + script);
 
