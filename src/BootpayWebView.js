@@ -10,27 +10,16 @@ export class BootpayWebView extends Component {
 
     webView = useRef<WebView>(null); 
 
+    _VERSION = "4.0.6";
+    _DEBUG = false;
+    _payload = {};
+
     
     state = {
         visibility: false, 
         script: '',
         firstLoad: false
-    } 
- 
-    // canGoBack() {
-    //     console.log('canGoBack');
-    //     if(this.webView.current) {
-    //         return this.webView.current.canGoBack();
-    //     }
-    //     return false;
-    // }
-
-    // goBack() {
-    //     console.log('GoBack');
-    //     if(this.webView.goBack) {
-    //         this.webView.current.goBack();
-    //     }
-    // }
+    }  
 
     async componentWillUnmount() {
         this.setState(
@@ -41,19 +30,7 @@ export class BootpayWebView extends Component {
             }
         )
         UserInfo.setBootpayLastTime(Date.now());
-    }
-
-    // componentDidMount() {
-    //     // if(this.webView == null || this.webView == undefined || this.webView == false) return;
-
-    //     console.log('componentDidMount: ' + this.close());
-
-    //     this.webView.injectJavaScript(`
-    //     javascript:(function(){${this.close()} })()
-    //     `);
-        
-    // }
- 
+    } 
     render() { 
         return <Modal
             animationType={'slide'}
@@ -91,7 +68,7 @@ export class BootpayWebView extends Component {
                     useWebKit={true}
                     originWhitelist={['*']}
                     source={{
-                        uri: 'https://webview.bootpay.co.kr/4.0.0/'
+                        uri: 'https://webview.bootpay.co.kr/4.0.6/'
                     }}
                     onRequestClose={()=> {
                         // console.log('onRequestClose');
@@ -121,11 +98,41 @@ export class BootpayWebView extends Component {
         this.bootpayRequest(payload, items, user, extra, "requestAuthentication");
     }
 
-    bootpayRequest = async (payload, items, user, extra, requestMethod) => {              
+    bootpayRequest = async (payload, items, user, extra, requestMethod) => {    
+
         payload.application_id =  Platform.OS == 'ios' ? this.props.ios_application_id : this.props.android_application_id;
         payload.items = items;
-        payload.user = user;
-        payload.extra = extra; 
+        payload.user = user; 
+        payload.extra = {
+            card_quota: extra.card_quota ?? "",
+            seller_name: extra.seller_name ?? "",            
+            delivery_day: extra.delivery_day ?? 1, //배송일자 
+            locale: extra.locale ?? "ko", 
+            offer_period: extra.offer_period ?? "" , //결제창 제공기간에 해당하는 string 값, 지원하는 PG만 적용됨
+            disp_cash_result: extra.disp_cash_result ?? true,  // 현금영수증 보일지 말지.. 가상계좌 KCP 옵션
+            deposit_expiration: extra.deposit_expiration ?? "", //가상계좌 입금 만료일자 설정, yyyy-MM-dd
+            app_scheme: extra.app_scheme ?? "", //ios의 경우 카드사 앱 호출 후 되돌아오기 위한 앱 스키마명 
+            use_card_point: extra.use_card_point ?? true,  //카드 포인트 사용 여부 (토스만 가능)
+            direct_card: extra.direct_card ?? "", //해당 카드로 바로 결제창 (토스만 가능)
+            use_order_id: extra.use_order_id ?? false, //가맹점 order_id로 PG로 전송
+            international_card_only: extra.international_card_only ?? false, //해외 결제카드 선택 여부 (토스만 가능)
+            // phone_carrier: 'SKT', // ['SKT', 'KT', 'LGT'] 중 택 1
+            direct_app_card: extra.direct_app_card ?? false, //카드사앱으로 direct 호출
+            direct_samsungpay: extra.direct_samsungpay ?? false, //삼성페이 바로 띄우기
+            test_deposit: extra.test_deposit ?? false, //가상계좌 모의 입금
+            enable_error_webhook: extra.enable_error_webhook ?? false, //결제 오류시 Feedback URL로 webhook
+            separately_confirmed: extra.separately_confirmed ?? true, // confirm 이벤트를 호출할지 말지, false일 경우 자동승인
+            confirm_only_rest_api: extra.confirm_only_rest_api ?? false, // REST API로만 승인 처리
+            open_type: extra.open_type ?? 'redirect', // [그대로 지정] 페이지 오픈 type [iframe, popup, redirect] 중 택 1, 앱에서는 redriect가 default 
+            use_bootpay_inapp_sdk: extra.use_bootpay_inapp_sdk ?? true, // [그대로 지정] native app에서는 redirect를 완성도있게 지원하기 위한 옵션 
+            redirect_url: extra.redirect_url ?? 'https://api.bootpay.co.kr/v2',  // [그대로 지정]  open_type이 redirect일 경우 페이지 이동할 URL ( 오류 및 결제 완료 모두 수신 가능 ) 
+            display_success_result: extra.display_success_result ?? false,  // 결제 완료되면 부트페이가 제공하는 완료창으로 보여주기 ( open_type이 iframe, popup 일때만 가능 )
+            display_error_result: extra.display_error_result ?? true, // 결제가 실패하면 부트페이가 제공하는 실패창으로 보여주기 ( open_type이 iframe, popup 일때만 가능 )
+            show_close_button: extra.show_close_button ?? false, // x 닫기 버튼 삽입 (닫기버튼이 없는 PG사를 위한 옵션)
+        }; 
+
+
+        this._payload = payload;
   
 
         //visibility가 true가 되면 webview onLoaded가 실행됨
@@ -158,6 +165,8 @@ export class BootpayWebView extends Component {
 
     getMountJavascript = async () => { 
         return `
+        ${this.getSDKVersion()}
+        ${this.getEnvironmentMode()}
         ${this.getBootpayPlatform()}
         ${this.close()}
         ${await this.getAnalyticsData()}
@@ -183,28 +192,27 @@ export class BootpayWebView extends Component {
     }
 
     onMessage = ({ nativeEvent }) => { 
-        if (nativeEvent == undefined || nativeEvent.data == undefined) return;
-        
+        // console.log(`onMessage: ${nativeEvent}, ${JSON.stringify(nativeEvent)}`);
 
-        console.log(`onMessage: ${nativeEvent.data}`);
+        if (nativeEvent == undefined) return;
+
+        const res = JSON.parse(JSON.stringify(nativeEvent));
+         
     
-        if(nativeEvent.data == 'close') {
+        if(res.data == 'close') {
             if(this.props.onClose == undefined) return;
             var json = {
                 action: 'BootpayClose',
                 message: '결제창이 닫혔습니다'
-            }
-            // this.setState(
-            //     {
-            //         visibility: false
-            //     }
-            // )
+            } 
             this.props.onClose(json);
             this.dismiss();
             return;
         }
 
-        const data = JSON.parse(nativeEvent.data);
+ 
+        const data = JSON.parse(res.data);
+ 
         switch (data.event) {
             case 'cancel':
                 if(this.props.onCancel != undefined) this.props.onCancel(data); 
@@ -223,12 +231,48 @@ export class BootpayWebView extends Component {
                 break;
             case 'close':
                 if(this.props.onClose != undefined) this.props.onClose(data);
-                break;
+                this.dismiss();
+                break; 
+        }
+ 
+        console.log(`redirect: ${JSON.stringify(data)}`);
+
+        if(this._payload != undefined && this._payload.extra != undefined && this._payload.extra.open_type == 'redirect') {
+            
+           
+            if(data.event == 'done' && this._payload.extra.display_success_result != true) { 
+                if(this.props.onClose != undefined) this.props.onClose(data);
+                this.dismiss();
+            } else if(data.event == 'error' && this._payload.extra.display_error_result != true ) { 
+                if(this.props.onClose != undefined) this.props.onClose(data);
+                this.dismiss();
+            } else if(data.event == 'cancel') {
+                if(this.props.onClose != undefined) this.props.onClose(data);
+                this.dismiss();
+            }
         }
     }
 
     onShouldStartLoadWithRequest = (url) => { 
         return true;
+    }
+
+    getSDKVersion = () => {
+        if(Platform.OS == 'ios') {
+            return "Bootpay.setVersion('" + this._VERSION + "', 'ios_react_native')";
+            // return "Bootpay.setDevice('IOS');";
+        } else if(Platform.OS == 'android'){
+            return "Bootpay.setVersion('" + this._VERSION + "', 'android_react_native')";
+            // return "Bootpay.setDevice('ANDROID');"; 
+        }
+    }
+
+    getEnvironmentMode = () => {
+        if(this._DEBUG) {
+            return "Bootpay.setEnvironmentMode('development');";
+
+        }
+        return "";
     }
 
     getBootpayPlatform = () => { 
@@ -249,15 +293,16 @@ export class BootpayWebView extends Component {
     // } 
 
     transactionConfirm = () => { 
-        const script = "Bootpay.confirm()" + 
-        ".then( function (res) {" + 
-        this.confirm() + 
-        this.issued() + 
-        this.done() + 
-        "}, function (res) {" +
-        this.error() + 
-        this.cancel() + 
-        "})";
+        const script = "Bootpay.confirm();"
+        //  + 
+        // ".then( function (res) {" + 
+        // this.confirm() + 
+        // this.issued() + 
+        // this.done() + 
+        // "}, function (res) {" +
+        // this.error() + 
+        // this.cancel() + 
+        // "})";
 
         this.callJavaScript(script);
     }
