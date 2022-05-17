@@ -9,6 +9,10 @@
 
 ### 1.5.0
 - webview update, android manifest 외부앱 패키지명 update 
+### 4.0.6
+- bootpay js 4.0.6 udpate 
+- openType redirect default 적용 
+
 ### 4.0.0
 - bootpay js major update 
 

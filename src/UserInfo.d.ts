@@ -11,4 +11,5 @@ export default class UserInfo extends Component {
     static getBootpayUserId(): Promise<unknown>;
     static setBootpayUserId: (val: string) => Promise<unknown>;
     static updateInfo: () => Promise<void>;
-} 
+}
+//# sourceMappingURL=UserInfo.d.ts.map
