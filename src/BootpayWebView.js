@@ -10,7 +10,7 @@ export class BootpayWebView extends Component {
 
     webView = useRef<WebView>(null); 
 
-    _VERSION = "4.0.6";
+    _VERSION = "4.0.7";
     _DEBUG = false;
     _payload = {};
 
@@ -129,6 +129,7 @@ export class BootpayWebView extends Component {
             display_success_result: extra.display_success_result ?? false,  // 결제 완료되면 부트페이가 제공하는 완료창으로 보여주기 ( open_type이 iframe, popup 일때만 가능 )
             display_error_result: extra.display_error_result ?? true, // 결제가 실패하면 부트페이가 제공하는 실패창으로 보여주기 ( open_type이 iframe, popup 일때만 가능 )
             show_close_button: extra.show_close_button ?? false, // x 닫기 버튼 삽입 (닫기버튼이 없는 PG사를 위한 옵션)
+            use_welcomepayment: extra.use_welcomepayment ?? false, // 웰컴에서 스마트로 재판모듈 사용시 true 
         }; 
 
 
@@ -212,6 +213,7 @@ export class BootpayWebView extends Component {
 
  
         const data = JSON.parse(res.data);
+        // console.log(`redirect: ${JSON.stringify(data)}`);
  
         switch (data.event) {
             case 'cancel':
@@ -221,7 +223,7 @@ export class BootpayWebView extends Component {
                 if(this.props.onError != undefined) this.props.onError(data); 
                 break;
             case 'issued':
-                if(this.props.onReady != undefined) this.props.onIssued(data);
+                if(this.props.onIssued != undefined) this.props.onIssued(data);
                 break;
             case 'confirm':
                 if(this.props.onConfirm != undefined) this.props.onConfirm(data);
@@ -235,7 +237,7 @@ export class BootpayWebView extends Component {
                 break; 
         }
  
-        console.log(`redirect: ${JSON.stringify(data)}`);
+        
 
         if(this._payload != undefined && this._payload.extra != undefined && this._payload.extra.open_type == 'redirect') {
             
@@ -244,6 +246,9 @@ export class BootpayWebView extends Component {
                 if(this.props.onClose != undefined) this.props.onClose(data);
                 this.dismiss();
             } else if(data.event == 'error' && this._payload.extra.display_error_result != true ) { 
+                if(this.props.onClose != undefined) this.props.onClose(data);
+                this.dismiss();
+            } else if(data.event == 'issued' && this._payload.extra.display_success_result != true ) { 
                 if(this.props.onClose != undefined) this.props.onClose(data);
                 this.dismiss();
             } else if(data.event == 'cancel') {
