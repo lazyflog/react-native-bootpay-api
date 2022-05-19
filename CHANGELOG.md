@@ -9,6 +9,9 @@
 
 ### 1.5.0
 - webview update, android manifest 외부앱 패키지명 update 
+### 4.0.8
+- bootpay webview version update 
+
 ### 4.0.7
 - 가상계좌 발급 버그 수정 
 

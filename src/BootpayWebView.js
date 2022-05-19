@@ -10,7 +10,7 @@ export class BootpayWebView extends Component {
 
     webView = useRef<WebView>(null); 
 
-    _VERSION = "4.0.7";
+    _VERSION = "4.0.8";
     _DEBUG = false;
     _payload = {};
 
