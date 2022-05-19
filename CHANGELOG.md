@@ -1,3 +1,7 @@
+### 4.0.9
+- open type redirect default 적용 
+- 네이버페이 뒤로가기 버튼 제거 
+
 ### 4.0.0
 - bootpay major update 
 
