@@ -1,3 +1,6 @@
+### 4.1.0
+- redirect type일 경우 done 에서 data.data로 파싱해야 하는 문제 수정, 기존 문법과 동일하게 적용가능하도록 패치한 버전 
+
 ### 4.0.9
 - open type redirect default 적용 
 - 네이버페이 뒤로가기 버튼 제거 

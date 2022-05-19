@@ -10,7 +10,7 @@ export class BootpayWebView extends Component {
 
     webView = useRef<WebView>(null); 
 
-    _VERSION = "4.0.8";
+    _VERSION = "4.1.0";
     _DEBUG = false;
     _payload = {};
 
@@ -193,7 +193,7 @@ export class BootpayWebView extends Component {
     }
 
     onMessage = ({ nativeEvent }) => { 
-        // console.log(`onMessage: ${nativeEvent}, ${JSON.stringify(nativeEvent)}`);
+        console.log(`onMessage: ${nativeEvent}, ${JSON.stringify(nativeEvent)}`);
 
         if (nativeEvent == undefined) return;
 
@@ -214,48 +214,99 @@ export class BootpayWebView extends Component {
  
         const data = JSON.parse(res.data);
         // console.log(`redirect: ${JSON.stringify(data)}`);
- 
-        switch (data.event) {
-            case 'cancel':
-                if(this.props.onCancel != undefined) this.props.onCancel(data); 
-                break;
-            case 'error':
-                if(this.props.onError != undefined) this.props.onError(data); 
-                break;
-            case 'issued':
-                if(this.props.onIssued != undefined) this.props.onIssued(data);
-                break;
-            case 'confirm':
-                if(this.props.onConfirm != undefined) this.props.onConfirm(data);
-                break;
-            case 'done':
-                if(this.props.onDone != undefined) this.props.onDone(data); 
-                break;
-            case 'close':
-                if(this.props.onClose != undefined) this.props.onClose(data);
-                this.dismiss();
-                break; 
-        }
- 
-        
 
-        if(this._payload != undefined && this._payload.extra != undefined && this._payload.extra.open_type == 'redirect') {
+        redirect = false;
+        show_success = false; 
+        show_error = false; 
+        if(this._payload != undefined && this._payload.extra != undefined) { 
+            if(this._payload.extra.open_type == 'redirect') {
+                redirect = true; 
+            }
+            if(this._payload.extra.display_error_result == true) {
+                show_error = true; 
+            }
+            if(this._payload.extra.display_success_result == 'redirect') {
+                show_success = true; 
+            }
+            
+        }
+
+        if(redirect == true) {
+            switch (data.event) {
+                case 'cancel':
+                    if(this.props.onCancel != undefined) this.props.onCancel(data); 
+                    if(this.props.onClose != undefined) this.props.onClose(data);
+                    this.dismiss();
+                    break;
+                case 'error':
+                    if(this.props.onError != undefined) this.props.onError(data); 
+                    if(show_error == false) {
+                        if(this.props.onClose != undefined) this.props.onClose(data);
+                        this.dismiss();
+                    }
+                    break;
+                case 'issued':
+                    if(this.props.onIssued != undefined) this.props.onIssued(data.data);
+                    if(show_success == false) {
+                        if(this.props.onClose != undefined) this.props.onClose(data.data);
+                        this.dismiss();
+                    }
+                    break;
+                case 'confirm':
+                    if(this.props.onConfirm != undefined) this.props.onConfirm(data);
+                    break;
+                case 'done':
+                    if(this.props.onDone != undefined) this.props.onDone(data.data); 
+                    if(show_success == false) {
+                        if(this.props.onClose != undefined) this.props.onClose(data.data);
+                        this.dismiss();
+                    }
+                    break;
+                case 'close':
+                    if(this.props.onClose != undefined) this.props.onClose(data);
+                    this.dismiss();
+                    break; 
+            }
+        } else {
+            switch (data.event) {
+                case 'cancel':
+                    if(this.props.onCancel != undefined) this.props.onCancel(data); 
+                    break;
+                case 'error':
+                    if(this.props.onError != undefined) this.props.onError(data); 
+                    break;
+                case 'issued':
+                    if(this.props.onIssued != undefined) this.props.onIssued(data);
+                    break;
+                case 'confirm':
+                    if(this.props.onConfirm != undefined) this.props.onConfirm(data);
+                    break;
+                case 'done':
+                    if(this.props.onDone != undefined) this.props.onDone(data); 
+                    break;
+                case 'close':
+                    if(this.props.onClose != undefined) this.props.onClose(data);
+                    this.dismiss();
+                    break; 
+            }
+        } 
+        // if(this._payload != undefined && this._payload.extra != undefined && this._payload.extra.open_type == 'redirect') {
             
            
-            if(data.event == 'done' && this._payload.extra.display_success_result != true) { 
-                if(this.props.onClose != undefined) this.props.onClose(data);
-                this.dismiss();
-            } else if(data.event == 'error' && this._payload.extra.display_error_result != true ) { 
-                if(this.props.onClose != undefined) this.props.onClose(data);
-                this.dismiss();
-            } else if(data.event == 'issued' && this._payload.extra.display_success_result != true ) { 
-                if(this.props.onClose != undefined) this.props.onClose(data);
-                this.dismiss();
-            } else if(data.event == 'cancel') {
-                if(this.props.onClose != undefined) this.props.onClose(data);
-                this.dismiss();
-            }
-        }
+        //     if(data.event == 'done' && this._payload.extra.display_success_result != true) { 
+        //         if(this.props.onClose != undefined) this.props.onClose(data);
+        //         this.dismiss();
+        //     } else if(data.event == 'error' && this._payload.extra.display_error_result != true ) { 
+        //         if(this.props.onClose != undefined) this.props.onClose(data);
+        //         this.dismiss();
+        //     } else if(data.event == 'issued' && this._payload.extra.display_success_result != true ) { 
+        //         if(this.props.onClose != undefined) this.props.onClose(data);
+        //         this.dismiss();
+        //     } else if(data.event == 'cancel') {
+        //         if(this.props.onClose != undefined) this.props.onClose(data);
+        //         this.dismiss();
+        //     }
+        // }
     }
 
     onShouldStartLoadWithRequest = (url) => { 
