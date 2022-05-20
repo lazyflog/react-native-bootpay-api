@@ -3,6 +3,7 @@
 import React, { Component, useRef, useEffect } from 'react';
 import { SafeAreaView, Modal, Platform, TouchableOpacity, Image, StyleSheet,  BackHandler} from 'react-native';
 import WebView  from 'react-native-webview-bootpay';
+import {debounce} from 'lodash';
 import UserInfo from './UserInfo'
 
 export class BootpayWebView extends Component {
@@ -10,7 +11,7 @@ export class BootpayWebView extends Component {
 
     webView = useRef<WebView>(null); 
 
-    _VERSION = "4.1.0";
+    _VERSION = "4.1.1";
     _DEBUG = false;
     _payload = {};
 
@@ -31,12 +32,20 @@ export class BootpayWebView extends Component {
         )
         UserInfo.setBootpayLastTime(Date.now());
     } 
+
+    componentDidMount() {
+        this.closeDismiss = debounce(this.closeDismiss, 30); 
+    }
+
+
     render() { 
         return <Modal
             animationType={'slide'}
             transparent={false} 
             onRequestClose={()=> { 
-                this.dismiss();
+                this.closeDismiss();
+                // console.log(1234);
+                // this.dismiss();
             }}
             visible={this.state.visibility}>
             <SafeAreaView style={{ flex: 1 }}>
@@ -54,7 +63,7 @@ export class BootpayWebView extends Component {
                             }
                             
                             if(this.props.onCancel != undefined) this.props.onCancel(cancelData);
-                            if(this.props.onClose != undefined) this.props.onClose(closeData); 
+                            if(this.props.onClose != undefined) this.props.onClose(); 
 
                             this.setState({visibility: false})
                         } }>
@@ -69,11 +78,7 @@ export class BootpayWebView extends Component {
                     originWhitelist={['*']}
                     source={{
                         uri: 'https://webview.bootpay.co.kr/4.0.6/'
-                    }}
-                    onRequestClose={()=> {
-                        // console.log('onRequestClose');
-                        this.dismiss();
-                    }}
+                    }} 
                     injectedJavaScript={this.state.script}
                     javaScriptEnabled={true}
                     javaScriptCanOpenWindowsAutomatically={true}
@@ -152,6 +157,16 @@ export class BootpayWebView extends Component {
         UserInfo.updateInfo();  
     }
  
+    // debounceClose = () => {
+    //     // deboun
+    //     console.log('debounceClose');
+    //     _.debounce(this.closeDismiss, 30); 
+    // }
+
+    closeDismiss = () => { 
+        if(this.props.onClose != undefined) this.props.onClose();
+        this.dismiss();
+    }
 
 
     dismiss = () => {
@@ -201,13 +216,14 @@ export class BootpayWebView extends Component {
          
     
         if(res.data == 'close') {
-            if(this.props.onClose == undefined) return;
-            var json = {
-                action: 'BootpayClose',
-                message: '결제창이 닫혔습니다'
-            } 
-            this.props.onClose(json);
-            this.dismiss();
+            this.closeDismiss();
+            // if(this.props.onClose == undefined) return;
+            // var json = {
+            //     action: 'BootpayClose',
+            //     message: '결제창이 닫혔습니다'
+            // } 
+            // this.props.onClose();
+            // this.dismiss();
             return;
         }
 
@@ -235,21 +251,18 @@ export class BootpayWebView extends Component {
             switch (data.event) {
                 case 'cancel':
                     if(this.props.onCancel != undefined) this.props.onCancel(data); 
-                    if(this.props.onClose != undefined) this.props.onClose(data);
-                    this.dismiss();
+                    this.closeDismiss(); 
                     break;
                 case 'error':
                     if(this.props.onError != undefined) this.props.onError(data); 
                     if(show_error == false) {
-                        if(this.props.onClose != undefined) this.props.onClose(data);
-                        this.dismiss();
+                        this.closeDismiss(); 
                     }
                     break;
                 case 'issued':
                     if(this.props.onIssued != undefined) this.props.onIssued(data.data);
                     if(show_success == false) {
-                        if(this.props.onClose != undefined) this.props.onClose(data.data);
-                        this.dismiss();
+                        this.closeDismiss(); 
                     }
                     break;
                 case 'confirm':
@@ -258,13 +271,11 @@ export class BootpayWebView extends Component {
                 case 'done':
                     if(this.props.onDone != undefined) this.props.onDone(data.data); 
                     if(show_success == false) {
-                        if(this.props.onClose != undefined) this.props.onClose(data.data);
-                        this.dismiss();
+                        this.closeDismiss(); 
                     }
                     break;
                 case 'close':
-                    if(this.props.onClose != undefined) this.props.onClose(data);
-                    this.dismiss();
+                    this.closeDismiss(); 
                     break; 
             }
         } else {
@@ -285,28 +296,10 @@ export class BootpayWebView extends Component {
                     if(this.props.onDone != undefined) this.props.onDone(data); 
                     break;
                 case 'close':
-                    if(this.props.onClose != undefined) this.props.onClose(data);
-                    this.dismiss();
+                    this.closeDismiss(); 
                     break; 
             }
-        } 
-        // if(this._payload != undefined && this._payload.extra != undefined && this._payload.extra.open_type == 'redirect') {
-            
-           
-        //     if(data.event == 'done' && this._payload.extra.display_success_result != true) { 
-        //         if(this.props.onClose != undefined) this.props.onClose(data);
-        //         this.dismiss();
-        //     } else if(data.event == 'error' && this._payload.extra.display_error_result != true ) { 
-        //         if(this.props.onClose != undefined) this.props.onClose(data);
-        //         this.dismiss();
-        //     } else if(data.event == 'issued' && this._payload.extra.display_success_result != true ) { 
-        //         if(this.props.onClose != undefined) this.props.onClose(data);
-        //         this.dismiss();
-        //     } else if(data.event == 'cancel') {
-        //         if(this.props.onClose != undefined) this.props.onClose(data);
-        //         this.dismiss();
-        //     }
-        // }
+        }  
     }
 
     onShouldStartLoadWithRequest = (url) => { 
@@ -349,16 +342,16 @@ export class BootpayWebView extends Component {
     // } 
 
     transactionConfirm = () => { 
-        const script = "Bootpay.confirm();"
-        //  + 
-        // ".then( function (res) {" + 
-        // this.confirm() + 
-        // this.issued() + 
-        // this.done() + 
-        // "}, function (res) {" +
-        // this.error() + 
-        // this.cancel() + 
-        // "})";
+        const script = "Bootpay.confirm()"
+         + 
+        ".then( function (res) {" + 
+        this.confirm() + 
+        this.issued() + 
+        this.done() + 
+        "}, function (res) {" +
+        this.error() + 
+        this.cancel() + 
+        "})";
 
         this.callJavaScript(script);
     }
@@ -376,8 +369,14 @@ export class BootpayWebView extends Component {
         // console.log('callJavascript: ' + script);
 
         this.webView.injectJavaScript(`
-        javascript:(function(){${script} })()
+        setTimeout(function() { ${script} }, 30);
         `);
+
+        // this.webView.injectJavaScript(`
+        // javascript:(function(){${script} })()
+        // `);
+
+        
         //   this.webView.evalu
     }  
 

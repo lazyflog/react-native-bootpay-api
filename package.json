@@ -1,6 +1,6 @@
 {
   "name": "react-native-bootpay-api",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "description": "React Native를 위한 bootpay 라이브러리 입니다.",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -91,7 +91,8 @@
     "react-native-device-info": "^8.7.0",
     "react-native-sensitive-info": "^5.5.8",
     "react-native-base64": "^0.2.1", 
-    "react-native-aes-crypto": "^2.1.0"
+    "react-native-aes-crypto": "^2.1.0",
+    "lodash": "^4.17.21"
   }, 
   "peerDependencies": {
     "react": "*",
