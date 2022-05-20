@@ -11,7 +11,7 @@ export class BootpayWebView extends Component {
 
     webView = useRef<WebView>(null); 
 
-    _VERSION = "4.1.1";
+    _VERSION = "4.1.2";
     _DEBUG = false;
     _payload = {};
 
@@ -260,7 +260,7 @@ export class BootpayWebView extends Component {
                     }
                     break;
                 case 'issued':
-                    if(this.props.onIssued != undefined) this.props.onIssued(data.data);
+                    if(this.props.onIssued != undefined) this.props.onIssued(data);
                     if(show_success == false) {
                         this.closeDismiss(); 
                     }
@@ -269,7 +269,7 @@ export class BootpayWebView extends Component {
                     if(this.props.onConfirm != undefined) this.props.onConfirm(data);
                     break;
                 case 'done':
-                    if(this.props.onDone != undefined) this.props.onDone(data.data); 
+                    if(this.props.onDone != undefined) this.props.onDone(data); 
                     if(show_success == false) {
                         this.closeDismiss(); 
                     }

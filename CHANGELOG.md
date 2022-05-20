@@ -1,3 +1,6 @@
+### 4.1.2
+- 4.1.0에서 적용했었던 부분을 로백함. v2는 data.data로 파싱(v2끼리 통일)하고 v1과의 호환된 데이터포맷을 지원하지 않기로 정책을 결정함. 
+
 ### 4.1.1
 - android hardware back button 시 close 이벤트 통지 
 - open type popup일 경우 done 미수신 버그 수정 
