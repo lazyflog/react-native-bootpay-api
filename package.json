@@ -1,6 +1,6 @@
 {
   "name": "react-native-bootpay-api",
-  "version": "4.1.5",
+  "version": "4.1.51",
   "description": "React Native를 위한 bootpay 라이브러리 입니다.",
   "main": "index.js",
   "main-internal": "src/index.ts",
@@ -88,6 +88,7 @@
     "macos",
     "windows",
     "lib",
+    "images",
     "src/index.js",
     "react-native-bootpay-api.podspec",
     "react-native.config.js"

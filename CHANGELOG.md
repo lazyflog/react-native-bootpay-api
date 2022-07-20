@@ -1,5 +1,8 @@
+### 4.1.51
+- images 폴더 빌드되지 않는 버그 fixed
+
 ### 4.1.5
-- typescript로 재작성 
+- typescript로 재작성
 
 ### 4.1.4
 - 재빌드, 재배포
