@@ -11,8 +11,7 @@ export interface BootpayTypesProps extends ViewProps {
     onIssued?: (data: Object) => void
     onConfirm?: (data: Object) => boolean
     onDone?: (data: Object) => void
-    onClose?: () => void
-    payload?: Payload
+    onClose?: () => void 
 }
 
 export class User {

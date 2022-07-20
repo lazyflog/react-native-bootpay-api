@@ -7,7 +7,7 @@ import {
   Text,
   TouchableOpacity
 } from 'react-native';
-import { Bootpay } from 'react-native-bootpay-api'; 
+import { Bootpay, Extra } from 'react-native-bootpay-api'; 
 
 
 export default function App() {
@@ -56,11 +56,13 @@ export default function App() {
 
 
     //기타 설정
-    const extra = {
-      card_quota: "0,2,3",  //결제금액이 5만원 이상시 할부개월 허용범위를 설정할 수 있음, [0(일시불), 2개월, 3개월] 허용, 미설정시 12개월까지 허용 
-      app_scheme: "bootpayrnapi", //ios의 경우 카드사 앱 호출 후 되돌아오기 위한 앱 스키마명  
-      show_close_button: false, // x 닫기 버튼 삽입 (닫기버튼이 없는 PG사를 위한 옵션)  
-    } 
+
+    // const extra = {
+    //   card_quota: "0,2,3",  //결제금액이 5만원 이상시 할부개월 허용범위를 설정할 수 있음, [0(일시불), 2개월, 3개월] 허용, 미설정시 12개월까지 허용 
+    //   app_scheme: "bootpayrnapi", //ios의 경우 카드사 앱 호출 후 되돌아오기 위한 앱 스키마명  
+    //   show_close_button: false, // x 닫기 버튼 삽입 (닫기버튼이 없는 PG사를 위한 옵션)  
+    // } 
+    const extra = new Extra();
 
     if(bootpay != null && bootpay.current != null) bootpay.current.requestPayment(payload, items, user, extra);
   }
@@ -133,10 +135,12 @@ export default function App() {
 
 
     //기타 설정
-    const extra = {
-      app_scheme: "bootpayrnapi", //ios의 경우 카드사 앱 호출 후 되돌아오기 위한 앱 스키마명  
-      show_close_button: false, // x 닫기 버튼 삽입 (닫기버튼이 없는 PG사를 위한 옵션)
-    } 
+    // const extra = {
+    //   app_scheme: "bootpayrnapi", //ios의 경우 카드사 앱 호출 후 되돌아오기 위한 앱 스키마명  
+    //   show_close_button: false, // x 닫기 버튼 삽입 (닫기버튼이 없는 PG사를 위한 옵션)
+    // } 
+
+    const extra = new Extra();
 
     if(bootpay != null && bootpay.current != null) bootpay.current.requestAuthentication(payload, [], {}, extra);
 

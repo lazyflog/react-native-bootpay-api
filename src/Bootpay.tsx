@@ -21,6 +21,8 @@ export class Bootpay extends Component<BootpayTypesProps> {
         this.webView = React.createRef();
     }
 
+    payload?: Payload
+
     state = {
         visibility: false, 
         script: '',
@@ -52,8 +54,7 @@ export class Bootpay extends Component<BootpayTypesProps> {
         if (event == undefined) return;
 
         const res = JSON.parse(JSON.stringify(event.nativeEvent.data));
- 
-         
+  
     
         if(res == 'close') {
             this.closeDismiss(); 
@@ -67,15 +68,16 @@ export class Bootpay extends Component<BootpayTypesProps> {
         var redirect = false
         let show_success = false
         let show_error = false
+ 
 
-        if(this.props.payload?.extra != undefined) { 
-            if(this.props.payload.extra?.open_type == 'redirect') {
+        if(this.payload?.extra != undefined) { 
+            if(this.payload.extra?.open_type == 'redirect') {
                 redirect = true; 
             }
-            if(this.props.payload.extra.display_error_result == true) {
+            if(this.payload.extra?.display_error_result == true) {
                 show_error = true; 
             }
-            if(this.props.payload.extra.display_success_result == true) {
+            if(this.payload.extra?.display_success_result == true) {
                 show_success = true; 
             }
             
@@ -313,8 +315,7 @@ export class Bootpay extends Component<BootpayTypesProps> {
 
  
 
-    requestPayment = async (payload: Payload, items: [Item], user: User, extra: Extra) => {       
-        console.log(124)
+    requestPayment = async (payload: Payload, items: [Item], user: User, extra: Extra) => {     
         
         this.bootpayRequest(payload, items, user, extra, "requestPayment");
     }
@@ -333,6 +334,8 @@ export class Bootpay extends Component<BootpayTypesProps> {
         payload.items = items;
         payload.user = user; 
         payload.extra = extra;
+
+        this.payload = payload 
  
         this.setState(
             {
