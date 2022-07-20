@@ -1,29 +1,55 @@
 {
+  "include": ["src/*"],
   "compilerOptions": {
-    "baseUrl": "./",
-    "paths": {
-      "react-native-bootpay-api": ["./src/index"]
-    },
-    "allowUnreachableCode": false,
-    "allowUnusedLabels": false,
-    "esModuleInterop": true,
-    "importsNotUsedAsValues": "error",
-    "forceConsistentCasingInFileNames": true,
-    "jsx": "react",
-    "lib": ["esnext"],
-    "declaration": true,
-    "declarationMap": true,
+    "baseUrl": "./src/",
+    "jsx": "react-native",
     "module": "esnext",
     "moduleResolution": "node",
+    "lib": ["es2017"],
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "lib",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
-    "noImplicitUseStrict": false,
-    "noStrictGenericChecks": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
+    "pretty": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
-    "strict": true,
-    "target": "esnext"
+    "strict": true
   }
 }
+
+
+// {
+//   "compilerOptions": {
+//     "baseUrl": "./",
+//     "paths": {
+//       "react-native-bootpay-api": ["./src/index"]
+//     },
+//     "allowUnreachableCode": false,
+//     "allowUnusedLabels": false,
+//     "esModuleInterop": true,
+//     "importsNotUsedAsValues": "error",
+//     "forceConsistentCasingInFileNames": true,
+//     "jsx": "react",
+//     "lib": ["esnext"],
+//     "declaration": true,
+//     "declarationMap": true,
+//     "module": "esnext",
+//     "moduleResolution": "node",
+//     "noFallthroughCasesInSwitch": true,
+//     "noImplicitReturns": true,
+//     "noImplicitUseStrict": false,
+//     "noStrictGenericChecks": false,
+//     "noUnusedLocals": true,
+//     "noUnusedParameters": true,
+//     "resolveJsonModule": true,
+//     "skipLibCheck": true,
+//     "strict": true,
+//     "target": "esnext"
+//   }
+// }

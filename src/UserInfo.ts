@@ -1,8 +1,9 @@
-import { Component } from 'react';
+// import { Component } from 'react';
 import DeviceInfo from 'react-native-device-info';
 import SInfo from 'react-native-sensitive-info'; 
 
-export default class UserInfo extends Component { 
+// export default class UserInfo extends Component { 
+export default class UserInfo { 
     static getBootpayInfo = (key: string, defaultVal: any) => {
         return new Promise((resolve, reject) => {
             SInfo.getItem(key, {
@@ -36,11 +37,11 @@ export default class UserInfo extends Component {
     }
 
     static getBootpaySK = () => {
-        return UserInfo.getBootpayInfo('bootpay_sk', ''); 
+        return UserInfo.getBootpayInfo('bootpay_sk', '')
     }
 
     static setBootpaySK = (val: string) => {
-        return UserInfo.setBootpayInfo('bootpay_sk', val); 
+        return UserInfo.setBootpayInfo('bootpay_sk', val) 
     }
 
     static newBootpaySK = (uuid: string, time: number) => { 
@@ -48,7 +49,7 @@ export default class UserInfo extends Component {
     }
 
     static getBootpayLastTime = async () => { 
-        return await UserInfo.getBootpayInfo('bootpay_last_time', 0); 
+        return await UserInfo.getBootpayInfo('bootpay_last_time', 0) as number
     }
 
     static setBootpayLastTime(val: number){
@@ -66,7 +67,7 @@ export default class UserInfo extends Component {
     static updateInfo = async () => {
         const uuid = await UserInfo.getBootpayUUID() as string;  
         const bootpaySK = await UserInfo.getBootpaySK() as string;
-        const lastTime = await UserInfo.getBootpayLastTime() as number;
+        const lastTime = await UserInfo.getBootpayLastTime();
 
         let current = Date.now();
 
