@@ -332,9 +332,9 @@ export class Bootpay extends Component<BootpayTypesProps> {
 
         payload.application_id =  Platform.OS == 'ios' ? this.props.ios_application_id : this.props.android_application_id;
         payload.items = items;
-        payload.user = user; 
-        payload.extra = extra;
-
+        payload.user = user && new User() 
+        payload.extra = extra && new Extra()
+ 
         this.payload = payload 
  
         this.setState(

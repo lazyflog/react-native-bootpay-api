@@ -35,8 +35,9 @@ react-native-bootpay-api는 내부적으로 아래의 모듈에 의존합니다.
 },
 "devDependencies": {    
     "react-native-webview-bootpay": last_version,
-    "react-native-device-info": last_version,
-    "react-native-sensitive-info": last_version
+    "react-native-sensitive-info": last_version,
+    "react-native-base64": last_version,
+    "react-native-device-info": last_version
 },
 ```
 
@@ -83,6 +84,7 @@ react-native-bootpay-api는 내부적으로 아래의 모듈에 의존합니다.
 ## 사용예제 
 
 ```typescript 
+ 
 import React, { useRef }  from 'react';
 
 import {
@@ -91,8 +93,7 @@ import {
   Text,
   TouchableOpacity
 } from 'react-native';
-import { BootpayWebView } from 'react-native-bootpay-api';
-// import { WebView } from 'react-native-webview-bootpay';
+import { Bootpay, Extra } from 'react-native-bootpay-api'; 
 
 
 export default function App() {
@@ -103,7 +104,7 @@ export default function App() {
   const goBootpayTest = () => {   
     const payload = {
       pg: '나이스페이',  //['kcp', 'danal', 'inicis', 'nicepay', 'lgup', 'toss', 'payapp', 'easypay', 'jtnet', 'tpay', 'mobilians', 'payletter', 'onestore', 'welcome'] 중 택 1
-      method: '네이버페이',  // ['카드', '휴대폰', '계좌이체', '가상계좌', '카카오페이', '네이버페이', '페이코', '카드자동'] 중 택 1 
+      method: '카드',  // ['카드', '휴대폰', '계좌이체', '가상계좌', '카카오페이', '네이버페이', '페이코', '카드자동'] 중 택 1 
       order_name: '마스카라', //결제창에 보여질 상품명
       order_id: '1234_1234', //개발사에 관리하는 주문번호 
       // subscription_id: '12345_21345', //개발사에 관리하는 주문번호 (정기결제용)
@@ -141,11 +142,13 @@ export default function App() {
 
 
     //기타 설정
+
     const extra = {
       card_quota: "0,2,3",  //결제금액이 5만원 이상시 할부개월 허용범위를 설정할 수 있음, [0(일시불), 2개월, 3개월] 허용, 미설정시 12개월까지 허용 
       app_scheme: "bootpayrnapi", //ios의 경우 카드사 앱 호출 후 되돌아오기 위한 앱 스키마명  
-      show_close_button: false, // x 닫기 버튼 삽입 (닫기버튼이 없는 PG사를 위한 옵션)
-    } 
+      show_close_button: false, // x 닫기 버튼 삽입 (닫기버튼이 없는 PG사를 위한 옵션)  
+    }  
+ 
 
     if(bootpay != null && bootpay.current != null) bootpay.current.requestPayment(payload, items, user, extra);
   }
@@ -220,32 +223,35 @@ export default function App() {
     //기타 설정
     const extra = {
       app_scheme: "bootpayrnapi", //ios의 경우 카드사 앱 호출 후 되돌아오기 위한 앱 스키마명  
-      show_close_button: false, // x 닫기 버튼 삽입 (닫기버튼이 없는 PG사를 위한 옵션)
+      show_close_button: true, // x 닫기 버튼 삽입 (닫기버튼이 없는 PG사를 위한 옵션)
+      
     } 
+
+    // const extra = new Extra();
 
     if(bootpay != null && bootpay.current != null) bootpay.current.requestAuthentication(payload, [], {}, extra);
 
   }
 
   const onCancel = (data: string) => {
-    console.log('cancel', data); 
+    console.log('-- cancel', data); 
   }
 
   const onError = (data: string) => {
-    console.log('error', data);
+    console.log('-- error', data);
   }
 
   const onIssued = (data: string) => {
-    console.log('ready', data);
+    console.log('-- issued', data);
   }
 
   const onConfirm = (data: string) => {
-    console.log('confirm', data);
+    console.log('-- confirm', data);
     if(bootpay != null && bootpay.current != null) bootpay.current.transactionConfirm(data);
   }
 
   const onDone = (data: string) => {
-    console.log('done', data);
+    console.log('-- done', data);
   }
 
   const onClose = () => {
@@ -264,19 +270,21 @@ export default function App() {
         >
         <Text>일반결제 결제테스트</Text>
       </TouchableOpacity> 
-      <BootpayWebView  
-        ref={bootpay}
-        ios_application_id={'5b8f6a4d396fa665fdc2b5e9'}
-        android_application_id={'5b8f6a4d396fa665fdc2b5e8'} 
-        // ios_application_id={'5b9f51264457636ab9a07cdd'}
-        // android_application_id={'5b9f51264457636ab9a07cdc'} 
-        onCancel={onCancel}
-        onError={onError}
-        onIssued={onIssued}
-        onConfirm={onConfirm}
-        onDone={onDone}
-        onClose={onClose} 
-      />
+
+      <Bootpay 
+      ref={bootpay}
+      ios_application_id={'5b8f6a4d396fa665fdc2b5e9'}
+      android_application_id={'5b8f6a4d396fa665fdc2b5e8'} 
+      // ios_application_id={'5b9f51264457636ab9a07cdd'}
+      // android_application_id={'5b9f51264457636ab9a07cdc'} 
+      onCancel={onCancel}
+      onError={onError}
+      onIssued={onIssued}
+      onConfirm={onConfirm}
+      onDone={onDone}
+      onClose={onClose} 
+
+      /> 
       <TouchableOpacity
           style={styles.button}
           onPress={goBootpaySubscriptionTest}
@@ -308,14 +316,14 @@ const styles = StyleSheet.create({
     padding: 10,
     margin: 10,
   },
-});
+}); 
  
 ```
  
 
 ## Documentation
 
-[부트페이 개발매뉴얼](https://bootpay.gitbook.io/docs/)을 참조해주세요
+[부트페이 개발매뉴얼](https://docs.bootpay.co.kr/?front=react-native&backend=nodejs)을 참조해주세요
 
 ## 기술문의
 

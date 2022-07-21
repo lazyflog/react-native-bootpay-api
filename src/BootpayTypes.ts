@@ -15,6 +15,8 @@ export interface BootpayTypesProps extends ViewProps {
 }
 
 export class User {
+    constructor() {}
+
     id?: string
     username?: string
     email?: string
@@ -26,6 +28,8 @@ export class User {
 }
 
 export class Item {
+    constructor() {}
+
     name?: string
     qty?: number
     id?: string
@@ -36,6 +40,8 @@ export class Item {
 }
 
 export class StatItem {
+    constructor() {}
+
     item_name?: string
     item_img?: string
     unique?: string
@@ -46,6 +52,7 @@ export class StatItem {
 }
 
 export class Onestore { 
+    constructor() {}
 
     ad_id?: string = "UNKNOWN_ADID"
     sim_operator?: string = "UNKNOWN_SIM_OPERATOR"
@@ -60,6 +67,8 @@ export class Onestore {
 // }
 
 export class Extra {
+    constructor() {}
+
     card_quota?: string // 할부허용 범위 (5만원 이상 구매시)
     seller_name?: string  //노출되는 판매자명 설정
     delivery_day?: number = 1  // 배송일자
@@ -95,7 +104,8 @@ export class Extra {
     show_close_button: boolean = false // x 닫기 버튼을 보여줄지 말지
 }
 
-export class Payload {
+export class Payload { 
+
     application_id?: string
     android_application_id?: string
     ios_application_id?: string
