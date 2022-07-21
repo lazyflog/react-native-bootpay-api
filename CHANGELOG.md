@@ -1,3 +1,6 @@
+### 4.1.52
+- webview version update for ios deeplink bug fixed 
+
 ### 4.1.51
 - images 폴더 빌드되지 않는 버그 fixed
 
