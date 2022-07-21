@@ -11722,10 +11722,10 @@ react-native-test-app@1.3.8:
     uuid "^8.3.2"
     yargs "^16.0.0"
 
-react-native-webview-bootpay@^11.22.84:
-  version "11.22.84"
-  resolved "https://registry.yarnpkg.com/react-native-webview-bootpay/-/react-native-webview-bootpay-11.22.84.tgz#ad5b279e7c73bf9b9e59d787ccd2090164d70a67"
-  integrity sha512-qe4cuqSmIa8Obir6ZIl/BtGLsGL+NJb4fPTuN9LOEuzASBCFCTqjaN7/ebvyy1kwSjFasudEojnB94k84QdB5Q==
+react-native-webview-bootpay@^11.22.85:
+  version "11.22.85"
+  resolved "https://registry.yarnpkg.com/react-native-webview-bootpay/-/react-native-webview-bootpay-11.22.85.tgz#49a41229c03880f665f72e4394f95c25d03d3b84"
+  integrity sha512-lDP7s/By4jMgQEjTCiDPZ9uz7hUuqQJWDfruICdl6OZwUGBPpKRrXHymUeaUESFEdpqx7SSmebfPlrmkx3GXOw==
   dependencies:
     escape-string-regexp "2.0.0"
     invariant "2.2.4"
