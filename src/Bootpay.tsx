@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { SafeAreaView, Modal, TouchableOpacity, Image, StyleSheet, Platform } from 'react-native';
 // import {  StyleSheet, Platform } from 'react-native';
 // import {  Platform, StyleSheet, Dimensions } from 'react-native';
-import WebView, {WebViewMessageEvent}  from 'react-native-webview-bootpay';
+import WebView, {WebViewMessageEvent}  from 'react-native-webview';
 import { BootpayTypesProps, Payload, Extra, Item, User } from './BootpayTypes';
 import {debounce} from 'lodash';
 import UserInfo from './UserInfo'
