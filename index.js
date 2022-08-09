@@ -1,4 +1,4 @@
 
-import { Bootpay } from './src/Bootpay'
+import { Bootpay } from './lib/Bootpay'
 
 export { Bootpay }; 
